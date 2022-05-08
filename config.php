@@ -3,6 +3,8 @@ define("DB_HOST", "localhost");
 define("DB_USER", "root");
 define("DB_PASSWORD", "");
 define("DB_NAME", "tasks_manager_db");
+define("DB_TABLE", "tasks");
+
 // define("DB_HOST", "localhost");
 // define("DB_NAME", "tasks_manager_db");
 // define("DB_TABLE", "tasks");
