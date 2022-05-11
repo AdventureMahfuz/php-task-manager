@@ -32,28 +32,36 @@
                     if(mysqli_num_rows($cresult) > 0){
                         ?>
                         <h3>Completed tasks</h3>
-                        <table>
-                            <tr>
-                                <th></th>
-                                <th>id</th>
-                                <th>Task</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                            <?php
-                             while($cdata = mysqli_fetch_assoc($cresult)): 
-                             $timestamp = strtotime($cdata['date']);
-                             $cdate = date("jS M, Y", $timestamp);
-                             ?>
-                            <tr>
-                                <td><input type="checkbox" value="<?php echo $cdata['id']; ?>"></td>
-                                <td><?php echo $cdata['id']; ?></td>
-                                <td><?php echo $cdata['task']; ?></td>
-                                <td><?php echo $cdate; ?></td>
-                                <td><a href="#" class="delete" data-dtaskid="<?php echo $cdata['id']; ?>">Delete</a> | <a href="#" class="incomplete" data-itaskid="<?php echo $cdata['id']; ?>">Incomplete</a></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </table>
+                        <form action="add_task.php" method="post">
+                            <table>
+                                <tr>
+                                    <th></th>
+                                    <th>id</th>
+                                    <th>Task</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                                <?php
+                                while($cdata = mysqli_fetch_assoc($cresult)): 
+                                $timestamp = strtotime($cdata['date']);
+                                $cdate = date("jS M, Y", $timestamp);
+                                ?>
+                                <tr>
+                                    <td><input name="taskIds[]" type="checkbox" value="<?php echo $cdata['id']; ?>"></td>
+                                    <td><?php echo $cdata['id']; ?></td>
+                                    <td><?php echo $cdata['task']; ?></td>
+                                    <td><?php echo $cdate; ?></td>
+                                    <td><a href="#" class="delete" data-dtaskid="<?php echo $cdata['id']; ?>">Delete</a> | <a href="#" class="incomplete" data-itaskid="<?php echo $cdata['id']; ?>">Incomplete</a></td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </table>
+                            <select name="action" class="bulkOptions">
+                                <option value="0">Bulk Action</option>
+                                <option value="bulkIncomplete">Incomplete</option>
+                                <option value="bulkDelete">Delete</option>
+                            </select>
+                            <button class="submit">submit</button>
+                        </form>
                         <?php
                     }
                 ?>
@@ -64,35 +72,36 @@
                     echo "<b>No result found</b>";
                 }else{
                     ?>
-                    <table>
-                            <tr>
-                                <th></th>
-                                <th>id</th>
-                                <th>Task</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                            <?php
-                             while($data = mysqli_fetch_assoc($result)): 
-                             $timestamp = strtotime($data['date']);
-                             $date = date("jS M, Y", $timestamp);
-                             ?>
-                            <tr>
-                                <td><input type="checkbox" value="<?php echo $data['id']; ?>"></td>
-                                <td><?php echo $data['id']; ?></td>
-                                <td><?php echo $data['task']; ?></td>
-                                <td><?php echo $date; ?></td>
-                                <td><a href="#" class="delete" data-dtaskid="<?php echo $data['id']; ?>">Delete</a> | <a href="#" class="complete" data-taskid="<?php echo $data['id']; ?>"><span>Complete</span></a></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </table>
-                        <select name="" id="">
-                            <option value="">select with</option>
-                            <option value="">All</option>
-                            <option value="">Completed</option>
-                            <option value="">Incomplete</option>
-                        </select>
-                        <button>submit</button>
+                    <form action="add_task.php" method="post">
+                        <table>
+                                <tr>
+                                    <th></th>
+                                    <th>id</th>
+                                    <th>Task</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                                <?php
+                                while($data = mysqli_fetch_assoc($result)): 
+                                $timestamp = strtotime($data['date']);
+                                $date = date("jS M, Y", $timestamp);
+                                ?>
+                                <tr>
+                                    <td><input name="taskIds[]" type="checkbox" value="<?php echo $data['id']; ?>"></td>
+                                    <td><?php echo $data['id']; ?></td>
+                                    <td><?php echo $data['task']; ?></td>
+                                    <td><?php echo $date; ?></td>
+                                    <td><a href="#" class="delete" data-dtaskid="<?php echo $data['id']; ?>">Delete</a> | <a href="#" class="complete" data-taskid="<?php echo $data['id']; ?>"><span>Complete</span></a></td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </table>
+                            <select name="action" class="bulkOptions">
+                                <option value="0">Bulk Action</option>
+                                <option value="bulkComplete">Complete</option>
+                                <option value="bulkDelete">Delete</option>
+                            </select>
+                            <button class="submit">submit</button>
+                        </form>
                     <?php
                 }
                 ?>
@@ -142,6 +151,13 @@
                 if(confirm('Are you sure to delete')){
                     $("#dTaskId").val(id);
                     $("#deleteTask").submit();
+                }
+            })
+            $(".submit").on("click", function(){
+                if($(".bulkOptions").val() == "bulkDelete"){
+                    if(!confirm("Are you sure to delete")){
+                        return false;
+                    }
                 }
             })
         })
