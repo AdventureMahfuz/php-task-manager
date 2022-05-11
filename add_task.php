@@ -43,6 +43,30 @@ if(!$conn){
                 mysqli_query($conn, $iQuery);
             }
             header("Location: index.php");
+        }else if("bulkComplete" == $action){
+            $bcTaskIds = $_POST['taskIds'];
+            $_bcTaskIds = join(',', $bcTaskIds);
+            if($_bcTaskIds){
+                $bcQuery = "UPDATE tasks SET complete = 1 WHERE id IN ($_bcTaskIds)";
+                mysqli_query($conn, $bcQuery);
+            }
+            header("location: index.php");
+        }else if("bulkIncomplete" == $action){
+            $bicTaskIds = $_POST['taskIds'];
+            $_bicTaskIds = join(",", $bicTaskIds);
+            if($_bicTaskIds){
+                $bicQuery = "UPDATE tasks SET complete = 0 WHERE id IN ($_bicTaskIds)";
+                mysqli_query($conn, $bicQuery);
+            }
+            header("Location: index.php");
+        }else if("bulkDelete" == $action){
+            $bdTaskIds = $_POST['taskIds'];
+            $_bdTaskIds = join(",", $bdTaskIds);
+            if($_bdTaskIds){
+                $bdQuery = "DELETE FROM tasks WHERE id IN ($_bdTaskIds)";
+                mysqli_query($conn, $bdQuery);
+            }
+            header("Location: index.php");
         }
     }
 }
